@@ -30,7 +30,7 @@ Effort
     deriving Show
 Task
     name String
-    TaskName' name
+    UniqueTaskName name
     deriving Show
 State
     currentEffort
@@ -39,17 +39,20 @@ State
 
 run = runSqlite "timely.db"
 
-add name = run $ do
+new name = run $ do
     insert (Task name)
     return ()
 
-start name = do
-    task <- run $ getBy (TaskName' name)
+start name = print "Not implemented"
+
+reg name hours = do
+    let seconds = hours*60^2
+    task <- run $ getBy (UniqueTaskName name)
     case task of
-        Nothing -> putStrLn "Invalid task"
+        Nothing -> print "Invalid task"
         Just (Entity i t) -> do
-            run $ insert (Effort i 90)
+            run $ insert (Effort i seconds)
             return ()
     return ()
 
-stop name = putStrLn "Task finished"
+stop name = print "Task finished"
