@@ -32,8 +32,9 @@ library
   hs-source-dirs:
       src
   build-depends:
-      HDBC >=2.4.0.3 && <2.5
-    , HDBC-sqlite3 >=2.3.3.1 && <2.4
+      persistent >= 2.10.5.2 && <2.11
+    , persistent-sqlite >= 2.10.6.2 && <2.11
+    , persistent-template >= 2.8.2.3 && < 2.9
     , base >=4.7 && <5
   default-language: Haskell2010
 
@@ -45,7 +46,8 @@ executable timely-exe
       app
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      persistent-sqlite >= 2.10.6.2 && <2.11
+    , base >=4.7 && <5
     , timely
   default-language: Haskell2010
 

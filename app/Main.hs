@@ -1,16 +1,17 @@
+{-# LANGUAGE OverloadedStrings          #-}
 module Main where
 
 import Lib
 import System.Environment
+import Database.Persist.Sqlite
+import Control.Monad.IO.Class
 
 main = do
-    conn <- connectDb
     args <- getArgs
     let (action:rest) = args
     case action of
-        "setup" -> setupDb conn
-        "add"   -> addTask (head rest)
-        "start" -> startTask (head rest)
-        "stop"  -> putStrLn $ "Task finished"
-        _       -> putStrLn $ "Invalid argument"
-    disconnectDb conn
+        "setup"  -> run $ runMigration migrateAll
+        "start"  -> start (head rest)
+        "stop"   -> stop (head rest)
+        "add"    -> add (head rest)
+        _        -> putStrLn "Invalid argument"

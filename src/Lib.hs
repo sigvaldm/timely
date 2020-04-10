@@ -1,68 +1,55 @@
+{-# LANGUAGE EmptyDataDecls             #-}
+{-# LANGUAGE FlexibleContexts           #-}
+{-# LANGUAGE GADTs                      #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE MultiParamTypeClasses      #-}
+{-# LANGUAGE OverloadedStrings          #-}
+{-# LANGUAGE QuasiQuotes                #-}
+{-# LANGUAGE TemplateHaskell            #-}
+{-# LANGUAGE TypeFamilies               #-}
+{-# LANGUAGE DerivingStrategies         #-}
+{-# LANGUAGE StandaloneDeriving         #-}
+{-# LANGUAGE UndecidableInstances       #-}
+
 module Lib (module Lib) where
--- module Lib
 --     ( Effort (..)
 --     , setupDb
 --     , saveEffort
 --     , loadEffort
 --     ) where
 
-import qualified Database.HDBC as HDBC
-import Database.HDBC (fromSql, toSql)
-import Database.HDBC.Sqlite3 (connectSqlite3)
+import           Control.Monad.IO.Class  (liftIO)
+import           Database.Persist
+import           Database.Persist.Sqlite
+import           Database.Persist.TH
 
-data Effort = Effort { eid :: Int
-                     , task :: Int
-                     , duration :: Int
-                     } deriving (Show)
+share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
+Effort
+    task TaskId
+    duration Int
+    deriving Show
+Task
+    name String
+    TaskName' name
+    deriving Show
+State
+    currentEffort
+    deriving Show
+|]
 
-connectDb = connectSqlite3 "timely.db"
+run = runSqlite "timely.db"
 
+add name = run $ do
+    insert (Task name)
+    return ()
 
-disconnectDb :: HDBC.IConnection conn => conn -> IO ()
-disconnectDb = HDBC.disconnect
+start name = do
+    task <- run $ getBy (TaskName' name)
+    case task of
+        Nothing -> putStrLn "Invalid task"
+        Just (Entity i t) -> do
+            run $ insert (Effort i 90)
+            return ()
+    return ()
 
--- setupDb :: IO ()
-setupDb conn = do
-    HDBC.run conn "CREATE TABLE effort  (task INTEGER NOT NULL,\
-                                       \ duration INTEGER NOT NULL)" []
-    HDBC.run conn "CREATE TABLE task    (name VARCHAR(128) UNIQUE, \
-                                       \ project INTEGER NOT NULL)" []
-    HDBC.run conn "CREATE TABLE project (domain INTEGER NOT NULL)" []
-    HDBC.run conn "CREATE TABLE domain  (task INTEGER NOT NULL, \
-                                       \ duration INTEGER NOT NULL)" []
-    HDBC.run conn "CREATE TABLE state   (currentTask)" []
-    HDBC.run conn "INSERT INTO state(currentTask) VALUES (?)" [HDBC.SqlNull]
-    HDBC.commit conn
-
-saveEffort :: Effort -> IO ()
-saveEffort effort = do
-    conn <- connectSqlite3 "timely.db"
-    HDBC.run conn "INSERT INTO effort(task, duration) VALUES(?,?)" [toSql $ task effort, toSql $ duration effort]
-    HDBC.commit conn
-    HDBC.disconnect conn
-
-loadEffort :: Int -> IO (Maybe Effort)
-loadEffort eid = HDBC.handleSqlError $ do
-    conn <- connectSqlite3 "timely.db"
-    res <- HDBC.quickQuery' conn "SELECT * FROM effort WHERE id=?" [toSql eid]
-    let eff = case res of [x] -> Just (convert x)
-                          _   -> Nothing
-    HDBC.disconnect conn
-    return eff
-    where
-        convert [sqlId, sqlTask, sqlDuration] = Effort (fromSql sqlId) (fromSql sqlTask) (fromSql sqlDuration)
-
-addTask name = HDBC.handleSqlError $ do
-    conn <- connectSqlite3 "timely.db"
-    HDBC.run conn "INSERT INTO task(name, project) VALUES(?,?)" [toSql name, toSql (1::Int)]
-    HDBC.commit conn
-    HDBC.disconnect conn
-    putStrLn ("Created task " ++ name)
-
-startTask task = HDBC.handleSqlError $ do
-    conn <- connectSqlite3 "timely.db"
-    (taskId:_):_ <- HDBC.quickQuery' conn "SELECT rowid FROM task WHERE name=?" [toSql task]
-    HDBC.run conn "UPDATE state SET currentTask = ? WHERE rowid=1" [taskId]
-    putStrLn $ "Started: " ++ task
-    HDBC.commit conn
-    HDBC.disconnect conn
+stop name = putStrLn "Task finished"
