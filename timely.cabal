@@ -1,10 +1,10 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.31.2.
+-- This file has been generated from package.yaml by hpack version 0.33.0.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 0212038b708cdd854b89870ae2fa1918f2653984142503440e5a921fef1de01f
+-- hash: 52c1150a1f3f0e0a6829b0f7701097eda41e94d880294b6f55863e1ae9e90488
 
 name:           timely
 version:        0.1.0.0
@@ -32,10 +32,11 @@ library
   hs-source-dirs:
       src
   build-depends:
-      persistent >= 2.10.5.2 && <2.11
-    , persistent-sqlite >= 2.10.6.2 && <2.11
-    , persistent-template >= 2.8.2.3 && < 2.9
-    , base >=4.7 && <5
+      base >=4.7 && <5
+    , optparse-applicative >=0.15.1.0 && <0.16
+    , persistent >=2.10.5.2 && <2.11
+    , persistent-sqlite >=2.10.6.2 && <2.11
+    , persistent-template >=2.8.2.3 && <2.9
   default-language: Haskell2010
 
 executable timely-exe
@@ -46,8 +47,8 @@ executable timely-exe
       app
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      persistent-sqlite >= 2.10.6.2 && <2.11
-    , base >=4.7 && <5
+      base >=4.7 && <5
+    , optparse-applicative >=0.15.1.0 && <0.16
     , timely
   default-language: Haskell2010
 

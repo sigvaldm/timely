@@ -25,8 +25,10 @@ dependencies:
 library:
   source-dirs: src
   dependencies:
-    - HDBC >= 2.4.0.3 && < 2.5
-    - HDBC-sqlite3 >= 2.3.3.1 && < 2.4
+    - persistent >= 2.10.5.2 && < 2.11
+    - persistent-sqlite >= 2.10.6.2 && < 2.11
+    - persistent-template >= 2.8.2.3 && < 2.9
+    - optparse-applicative >= 0.15.1.0 && < 0.16
 
 executables:
   timely-exe:
@@ -38,6 +40,7 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - timely
+    - optparse-applicative >= 0.15.1.0 && < 0.16
 
 tests:
   timely-test:

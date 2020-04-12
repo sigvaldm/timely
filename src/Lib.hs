@@ -39,6 +39,8 @@ State
 
 run = runSqlite "timely.db"
 
+migrate = run $ runMigration migrateAll
+
 new name = run $ do
     insert (Task name)
     return ()
@@ -55,4 +57,4 @@ reg name hours = do
             return ()
     return ()
 
-stop name = print "Task finished"
+stop = print "Task finished"

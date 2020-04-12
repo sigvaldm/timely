@@ -40,9 +40,6 @@ packages:
 #   commit: e7b331f14bcffb8367cd58fbfc8b40ec7642100a
 #
 extra-deps:
-- persistent-2.10.5.2@sha256:aaa222a48583b22f0af00bb9ee6adc839ec75256b158f38d85c9c2cb68ec6eb4,4740
-- persistent-sqlite-2.10.6.2@sha256:f6e7fe07e57137c8b7633f784a4ba38963aa52b6bca79d165c5b13081585ac5a,5031
-- persistent-template-2.8.2.3@sha256:26f398b06fdc05c6a1a1a75afdc06f28dfd1f33626249db7e28aa3f117d52a0a,2774
 # Override default flag values for local packages and extra-deps
 # flags: {}
 
