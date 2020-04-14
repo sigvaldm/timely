@@ -13,4 +13,3 @@ Convenient (from a developer's point of view) time-tracking software written in 
 | Start timing an(other) effort     | `timely start <task> [<time>]`   |
 | Stop timing                       | `timely stop [<time>]`           |
 | Register effort manually          | `timely reg <task> <time>`       |
-

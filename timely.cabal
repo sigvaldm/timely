@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 52c1150a1f3f0e0a6829b0f7701097eda41e94d880294b6f55863e1ae9e90488
+-- hash: 5b2da587e3fe4414d59dfce15aba1eaa590ced433c94e1f861ec6234250f0fa1
 
 name:           timely
 version:        0.1.0.0
@@ -34,9 +34,12 @@ library
   build-depends:
       base >=4.7 && <5
     , optparse-applicative >=0.15.1.0 && <0.16
+    , parsec >=3.1.14.0 && <3.2
     , persistent >=2.10.5.2 && <2.11
     , persistent-sqlite >=2.10.6.2 && <2.11
     , persistent-template >=2.8.2.3 && <2.9
+    , text >=1.2.4.0 && <1.3
+    , time >=1.9.3 && <1.10
   default-language: Haskell2010
 
 executable timely-exe
@@ -49,6 +52,8 @@ executable timely-exe
   build-depends:
       base >=4.7 && <5
     , optparse-applicative >=0.15.1.0 && <0.16
+    , text >=1.2.4.0 && <1.3
+    , time >=1.9.3 && <1.10
     , timely
   default-language: Haskell2010
 
@@ -62,5 +67,7 @@ test-suite timely-test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , text >=1.2.4.0 && <1.3
+    , time >=1.9.3 && <1.10
     , timely
   default-language: Haskell2010
