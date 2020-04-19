@@ -18,6 +18,7 @@ main = do
         Start task -> start task
         Stop -> stop
         Reg name seconds -> reg name seconds
+        List -> list
 
 data Command
     = Setup
@@ -25,15 +26,17 @@ data Command
     | Start {name :: String}
     | Stop
     | Reg {name :: String, time :: Int}
+    | List
 
 cmdSetup :: Parser Command
 cmdSetup = pure Setup
 
-cmdNew :: Parser Command
-cmdNew = New <$> argument str (metavar "TASK")
-
 cmdStart = Start <$> argument str (metavar "TASK")
 cmdStop = pure Stop
+cmdList = pure List
+
+cmdNew :: Parser Command
+cmdNew = New <$> argument str (metavar "TASK")
 
 parseTimeDiff' :: String -> Either String Int
 parseTimeDiff' p = case parseTimeDiff p of
@@ -43,12 +46,14 @@ parseTimeDiff'' = eitherReader parseTimeDiff'
 
 cmdReg = Reg <$> argument str (metavar "TASK") <*> argument parseTimeDiff'' (metavar "TIME")
 
+
 commands = hsubparser
     (  command "setup" (info cmdSetup (progDesc "Setup database file"))
     <> command "new"   (info cmdNew (progDesc "Create a new task"))
     <> command "reg"   (info cmdReg (progDesc "Register an effort (manually)"))
     <> command "start" (info cmdStart (progDesc "Start a an(other) effort"))
     <> command "stop"  (info cmdStop (progDesc "Stop effort"))
+    <> command "list"  (info cmdStop (progDesc "List tasks"))
     )
 
 opts = info (commands <**> helper)
