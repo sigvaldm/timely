@@ -50,7 +50,8 @@ new name = run $ do
 
 start name = print "Not implemented"
 
-reg name seconds = do
+reg :: String -> Day -> Int -> IO ()
+reg name day seconds = do
     task <- run $ getBy (UniqueTaskName name)
     case task of
         Nothing -> print "Invalid task"

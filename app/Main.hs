@@ -9,15 +9,17 @@ import Options.Applicative
 import Data.Semigroup ((<>))
 import Data.Time
 import Data.Text
+import Data.Time.Calendar
 
 main = do
-    options <- execParser opts
+    today <- getLocalDay
+    options <- execParser (opts today)
     case options of
         Setup -> migrate
         New name -> new name
         Start task -> start task
         Stop -> stop
-        Reg name seconds -> reg name seconds
+        Reg name day seconds -> reg name day seconds
         List -> list
 
 data Command
@@ -25,7 +27,7 @@ data Command
     | New {name :: String}
     | Start {name :: String}
     | Stop
-    | Reg {name :: String, time :: Int}
+    | Reg {name :: String, day :: Day, duration :: Int}
     | List
 
 cmdSetup :: Parser Command
@@ -42,21 +44,30 @@ parseTimeDiff' :: String -> Either String Int
 parseTimeDiff' p = case parseTimeDiff p of
                     Left x -> Left (show x)
                     Right x -> Right x
+
+parseDate' :: Day -> String -> Either String Day
+parseDate' today p = case parseDate today p of
+                    Left x -> Left (show x)
+                    Right x -> Right x
+
 parseTimeDiff'' = eitherReader parseTimeDiff'
+parseDate'' today = eitherReader (parseDate' today)
 
-cmdReg = Reg <$> argument str (metavar "TASK") <*> argument parseTimeDiff'' (metavar "TIME")
+cmdReg today = Reg <$> argument str (metavar "TASK")
+                   <*> argument (parseDate'' today) (metavar "DAY")
+                   <*> argument parseTimeDiff'' (metavar "DURATION")
 
 
-commands = hsubparser
+commands today= hsubparser
     (  command "setup" (info cmdSetup (progDesc "Setup database file"))
     <> command "new"   (info cmdNew (progDesc "Create a new task"))
-    <> command "reg"   (info cmdReg (progDesc "Register an effort (manually)"))
+    <> command "reg"   (info (cmdReg today) (progDesc "Register an effort (manually)"))
     <> command "start" (info cmdStart (progDesc "Start a an(other) effort"))
     <> command "stop"  (info cmdStop (progDesc "Stop effort"))
     <> command "list"  (info cmdList (progDesc "List tasks"))
     )
 
-opts = info (commands <**> helper)
+opts today = info ((commands today) <**> helper)
     (  fullDesc
     <> progDesc "Timely - CLI-based time tracking"
     <> header "Timely - CLI-based time tracking" )
