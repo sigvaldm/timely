@@ -18,6 +18,7 @@ import Database.Persist.Sqlite
 import Database.Persist.TH
 import Text.Parsec hiding (State)
 import Control.Monad
+import Data.List (intersperse)
 import Data.Time
 import Data.Time.Clock
 import Data.Time.Calendar
@@ -58,10 +59,10 @@ reg name seconds = do
             return ()
     return ()
 
--- list = do
---     tasks <- selectList [TaskName !=. ""] []
---     -- x <- map (putStrLn.taskName.entityVal) tasks
---     return ()
+list = do
+    tasks <- run $ selectList [TaskName !=. ""] []
+    let taskNames = map (taskName.entityVal) tasks
+    putStrLn.concat $ intersperse "\n" taskNames
 
 stop = print "Task finished"
 

@@ -53,7 +53,7 @@ commands = hsubparser
     <> command "reg"   (info cmdReg (progDesc "Register an effort (manually)"))
     <> command "start" (info cmdStart (progDesc "Start a an(other) effort"))
     <> command "stop"  (info cmdStop (progDesc "Stop effort"))
-    <> command "list"  (info cmdStop (progDesc "List tasks"))
+    <> command "list"  (info cmdList (progDesc "List tasks"))
     )
 
 opts = info (commands <**> helper)
